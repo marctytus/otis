@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>    <script src="https://cdn.usefathom.com/script.js" data-site="TPJCICJK" defer></script>
+    <meta charset="UTF-8">
+    <meta property="og:image" content="https://heyfash.com/otis/cover.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Otis' Adventure Land</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+	    
+	    body, html {
+		        background-image: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+canvas {
+    display: block; /* Ensures no extra space around the canvas */
+}
+
+/* Add styles for the fullscreen button */
+#fullscreenBtn {
+    padding: 5px 10px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    background-color: #4CAF50;
+    color: white;
+}
+
+#fullscreenBtn:hover {
+    background-color: #45a049;
+}
+
+#settingsBtn {
+    position: absolute;
+    left: 10px;
+    bottom: 10px;
+    font-size: 24px;
+    cursor: pointer;
+    z-index: 10 !important;
+}
+
+.modal {
+    display: none; 
+    position: fixed; 
+    z-index: 1; 
+    left: 0;
+    top: 0;
+    width: 100%; 
+    height: 100%; 
+    overflow: auto; 
+    background-color: rgba(0,0,0,0.4); 
+}
+
+.modal-content {
+    font-family: 'Poppins', sans-serif; /* Playful and readable font */
+    color: #555; /* Soft text color */
+    background-color: #f3f3f9; /* Light pastel background */
+    border-radius: 15px; /* Rounded corners */
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+    margin: 10% auto; /* Adjusted for better positioning */
+    padding: 25px; /* More padding for a spacious feel */
+    border: 1px solid #e7e4f3; /* Soft border color */
+    width: 30%; /* Adjust width as needed */
+    max-width: 350px;
+    position: relative;
+}
+
+.modal-content h2 {
+    color: #6a5acd; /* Soft purple for headings */
+    font-weight: 600; /* Slightly bolder weight for headings */
+}
+
+input[type=text] {
+    border: 1px solid #e7e4f3;
+    border-radius: 5px;
+    padding: 8px;
+    width: 100%;
+    margin-bottom: 20px; /* Space below the input field */
+}
+
+button {
+    background-color: #6a5acd; /* Soft purple, matching the heading */
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+button:hover {
+    background-color: #7b6ad6; /* Slightly lighter purple on hover */
+}
+
+
+.close {
+    color: #aaa;
+    font-size: 28px;
+    cursor: pointer;
+    /* Align to top-right corner of the modal */
+    position: absolute;
+    right: 10px;
+    top: 10px;
+}
+
+.close:hover,
+.close:focus {
+    color: #000; /* Darker color on hover for better visibility */
+}
+
+@media screen and (max-width: 768px) {
+    .modal-content {
+        width: 90%; /* Increase width on mobile */
+        max-width: none;
+        padding: 20px; /* Increase padding */
+    }
+
+    input[type=text], button {
+        font-size: 18px; /* Larger font size */
+        padding: 12px; /* Larger padding */
+    }
+
+    .modal-content h2 {
+        font-size: 24px; /* Larger heading */
+    }
+}
+
+/* Styles for the toggle switch container and label */
+.toggle-label {
+    display: block;
+    margin-bottom: 10px; /* Space between label and switch */
+    font-weight: 600;
+    color: #6a5acd;
+    font-size: 16px;
+}
+
+/* The container for the toggle switch */
+.toggle {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+    margin-top: 5px; /* Align with the label */
+}
+
+/* Hide the default checkbox input */
+.toggle-input {
+    display: none;
+}
+
+/* The slider for the toggle switch */
+.toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 34px;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+}
+
+.toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2); /* Subtle shadow for the knob */
+}
+
+/* Toggle ON style */
+.toggle-input:checked + .toggle-slider {
+    background-color: #8bc34a;
+}
+
+/* Toggle knob to the right (ON) position */
+.toggle-input:checked + .toggle-slider:before {
+    transform: translateX(26px);
+}
+
+/* Enhanced visibility for the ON/OFF text inside the toggle */
+.toggle-slider:after {
+    content: 'OFF';
+    color: #9a9a9a;
+    display: block;
+    position: absolute;
+    transform: translate(-50%, -50%);
+    top: 50%;
+    right: 10px;
+    font-size: 12px;
+    font-family: 'Poppins', sans-serif;
+    transition: all 0.3s;
+    opacity: 0.7;
+}
+
+/* Toggle ON text */
+.toggle-input:checked + .toggle-slider:after {
+    content: 'ON';
+    color: white;
+    left: 18px; /* Adjust if needed to center the text in the knob */
+    right: auto;
+    opacity: 1;
+}
+
+/* Adjust modal-content padding for better spacing */
+.modal-content {
+    padding: 25px;
+}
+
+/* Ensure the Save button is aligned properly */
+#saveBtn {
+    margin-top: 20px; /* Provide space above the save button */
+    width: 100%; /* Full width button */
+}
+
+/* Adjust modal-content padding for better spacing */
+.modal-content {
+    padding: 25px; /* Adjust the padding as needed */
+}
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas"></canvas>
+    <button id="settingsBtn" title="Settings">
+    ⚙️
+</button>
+
+<div id="settingsModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Settings</h2>
+        <label for="childName">Child's Name:</label>
+		<input type="text" id="childName" name="childName" placeholder="Otis">
+		<label for="soundToggle" class="toggle-label">Sound:</label>
+		<div class="toggle">
+		    <input type="checkbox" id="soundToggle" class="toggle-input">
+		    <label for="soundToggle" class="toggle-slider"></label>
+		</div>
+
+        <button id="saveBtn">Save</button>
+    </div>
+</div>
+
+    
+    <script>
+	    
+function setCookie(name, value, days) {
+    var expires = "";
+    if (days) {
+        var date = new Date();
+        date.setTime(date.getTime() + (days*24*60*60*1000));
+        expires = "; expires=" + date.toUTCString();
+    }
+    document.cookie = name + "=" + (value || "")  + expires + "; path=/; SameSite=Lax";
+}
+function getCookie(name) {
+    var nameEQ = name + "=";
+    var ca = document.cookie.split(';');
+    for(var i=0;i < ca.length;i++) {
+        var c = ca[i];
+        while (c.charAt(0)==' ') c = c.substring(1,c.length);
+        if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+    }
+    return null;
+}
+window.onload = function() {
+    var nameFromCookie = getCookie("childName");
+    var soundSetting = getCookie("soundSetting");
+
+    if (nameFromCookie) {
+        currentChildName = nameFromCookie;
+        document.getElementById("childName").value = currentChildName;
+    }
+    
+    if (soundSetting !== null) {
+        document.getElementById("soundToggle").checked = (soundSetting === 'true');
+    }
+};
+	    
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+let currentChildName = "";
+
+let isTogglingFullscreen = false;
+let captionColor = getRandomBrightColor(); // Initial random color
+
+const backgroundImages = ['background.jpeg', 'background2.png', 'background4.png']; // Your image files
+let selectedBackgroundImage = backgroundImages[Math.floor(Math.random() * backgroundImages.length)];
+
+let backgroundImage = new Image();
+backgroundImage.src = selectedBackgroundImage;
+
+let childName = "Otis"; // Default name
+
+let cursor = { x: 0, y: 0 };
+
+let emojis = [
+    '😀', '🐶', '🍎', '🚗', '🌈', '🐻', '🎈', '🍪', '🐤', '🚁',
+    '🐱', '🍭', '🚤', '🐠', '🍕', '🌻', '🚲', '🦋', '🎨', '🍔',
+    '🌼', '🚀', '🦕', '🧁', '🐦', '🎪', '🍦', '🐢', '🚁', '🏰',
+    '🐩', '🎈', '🍩', '🐥', '🚂', '🌞', '🍇', '🎳', '🍓', '🚛',
+    '🦖', '🎯', '🎂', '🌸', '🏎️', '🍌', '🎲', '🍬', '🚒', '🦄',
+    '🍎', '🎠', '🍟', '🐇', '🚁', '🌝', '🍰', '🐳', '🍝', '🚜',
+    '🐘', '🎵', '🍧', '🐾', '🚢', '🌼', '🎻', '🍎', '🍦', '🚁',
+    '🦁', '🎤', '🍨', '🐒', '🚁', '🌛', '🍩', '🐻', '🍕', '🚁',
+    '🐼', '🎶', '🍮', '🐥', '🚗', '🌟', '🍓', '🏀', '🍔', '🚀',
+    '🐯', '🎩', '🍫', '🐣', '🚴‍♂️', '🌠', '🍒', '🎳', '🍟', '🚁',
+    '🐵', '🎪', '🍯', '🦆', '🚁', '🌙', '🍪', '🐨', '🍖', '🚁'];
+
+let emojiCaptions = {
+    '😀': 'Happy',
+    '🐶': 'Dog',
+    '🍎': 'Apple',
+    '🚗': 'Car',
+    '🌈': 'Rainbow',
+    '🐻': 'Bear',
+    '🎈': 'Balloon',
+    '🍪': 'Cookie',
+    '🐤': 'Bird',
+    '🚁': 'Helicopter',
+    '🐱': 'Cat',
+    '🍭': 'Lollipop',
+    '🚤': 'Boat',
+    '🐠': 'Fish',
+    '🍕': 'Pizza',
+    '🌻': 'Sunflower',
+    '🚲': 'Bicycle',
+    '🦋': 'Butterfly',
+    '🎨': 'Art',
+    '🍔': 'Burger',
+    '🌼': 'Flower',
+    '🚀': 'Rocket',
+    '🦕': 'Dinosaur',
+    '🧁': 'Cupcake',
+    '🐦': 'Bird',
+    '🎪': 'Circus',
+    '🍦': 'Ice Cream',
+    '🐢': 'Turtle',
+    '🚁': 'Helicopter',
+    '🏰': 'Castle',
+    '🐩': 'Dog',
+    '🎈': 'Balloon',
+    '🍩': 'Donut',
+    '🐥': 'Chick',
+    '🚂': 'Train',
+    '🌞': 'Sun',
+    '🍇': 'Grapes',
+    '🎳': 'Bowling',
+    '🍓': 'Strawberry',
+    '🚛': 'Truck',
+    '🦖': 'Dinosaur',
+    '🎯': 'Target',
+    '🎂': 'Cake',
+    '🌸': 'Flower',
+    '🏎️': 'Racecar',
+    '🍌': 'Banana',
+    '🎲': 'Dice',
+    '🍬': 'Candy',
+    '🚒': 'Firetruck',
+    '🦄': 'Unicorn',
+    '🍎': 'Apple',
+    '🎠': 'Carousel',
+    '🍟': 'Fries',
+    '🐇': 'Bunny',
+    '🌝': 'Moon',
+    '🍰': 'Cake',
+    '🐳': 'Whale',
+    '🍝': 'Spaghetti',
+    '🚜': 'Tractor',
+    '🐘': 'Elephant',
+    '🎵': 'Music',
+    '🍧': 'Ice Cream',
+    '🐾': 'Paw',
+    '🚢': 'Ship',
+    '🌼': 'Flower',
+    '🎻': 'Violin',
+    '🍦': 'Ice Cream',
+    '🦁': 'Lion',
+    '🎤': 'Microphone',
+    '🍨': 'Dessert',
+    '🐒': 'Monkey',
+    '🌛': 'Moon',
+    '🍩': 'Donut',
+    '🐻': 'Bear',
+    '🍕': 'Pizza',
+    '🐼': 'Panda',
+    '🎶': 'Music',
+    '🍮': 'Pudding',
+    '🌟': 'Star',
+    '🍓': 'Strawberry',
+    '🏀': 'Basketball',
+    '🐯': 'Tiger',
+    '🎩': 'Hat',
+    '🍫': 'Chocolate',
+    '🐣': 'Chick',
+    '🚴‍♂️': 'Biking',
+    '🌠': 'Star',
+    '🍒': 'Cherry',
+    '🦖': 'T-Rex',
+    '🦄': 'Unicorn',
+    '🎠': 'Merry-Go-Round',
+    '🐵': 'Monkey',
+    '🎪': 'Circus',
+    '🍯': 'Honey',
+    '🦆': 'Duck',
+    '🌙': 'Crescent Moon',
+    '🐨': 'Koala',
+    '🍖': 'Meat'
+};
+
+
+
+
+window.onload = function() {
+    var nameFromCookie = getCookie("childName");
+    var soundSetting = getCookie("soundSetting");
+
+    // Set the name in the settings if it's saved in the cookie
+    if (nameFromCookie) {
+        currentChildName = nameFromCookie;
+        document.getElementById("childName").value = currentChildName;
+    }
+    
+    // Set the sound toggle state based on the cookie
+    document.getElementById("soundToggle").checked = (soundSetting === 'true');
+};
+
+// When the save button is clicked, save the name and sound settings
+saveBtn.onclick = function() {
+    currentChildName = document.getElementById("childName").value.trim();
+    // Get the state of the toggle switch for sound
+    var soundSetting = document.getElementById("soundToggle").checked;
+
+    // Save the name and sound settings in cookies
+    setCookie("childName", currentChildName, 365);
+    setCookie("soundSetting", soundSetting, 365);
+
+    // Close the settings modal
+    modal.style.display = "none";
+};
+
+// Update the speak function to check the sound setting before speaking
+function speak(text) {
+    // Retrieve the current state of the sound toggle switch
+    var soundSetting = document.getElementById("soundToggle").checked;
+    if (!soundSetting) return; // Exit the function if sound is toggled off
+
+    // Continue with speech synthesis if sound is enabled
+    if (window.speechSynthesis) {
+        let utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'en-US'; // Set the language
+        utterance.rate = 0.9; // Slower speech rate; adjust as needed
+        window.speechSynthesis.speak(utterance);
+    } else {
+        console.error("Speech synthesis not supported in this browser.");
+    }
+}
+
+let currentEmojiIndex = Math.floor(Math.random() * emojis.length);
+let currentEmoji = emojis[currentEmojiIndex]; // Set the first emoji to a random one
+let emojiSize = 115;
+let emojiPosition = {
+    x: Math.random() * (canvas.width - emojiSize) + emojiSize / 2,
+    y: Math.random() * (canvas.height - emojiSize) + emojiSize / 2
+};
+let fonts = ['Arial', 'Verdana', 'Times New Roman', 'Georgia', 'Courier New'];
+let currentFontIndex = 0;
+let lastEmojiIndex = 0;
+let minEmojiSize = 115; // The minimum size you've been using
+let maxEmojiSize = 150; // Set a maximum size for the emoji
+let vicinityThreshold = 100; // Distance threshold to keep the new emoji away from the last one
+
+let lastSpacePress = 0; // Tracks the last time the space bar was pressed
+
+document.addEventListener('keydown', function(event) {
+    if (event.code === 'Space') {
+        const now = Date.now();
+        if (now - lastSpacePress > 900) { // 900 milliseconds limit
+            updateEmoji();
+            lastSpacePress = now; // Update the last time the space bar was pressed
+        }
+    }
+});
+
+
+document.addEventListener('mousemove', handleMouseMove);
+document.addEventListener('click', handleMouseClick);
+document.addEventListener('contextmenu', (event) => event.preventDefault());
+
+function handleMouseMove(event) {
+    cursor.x = event.clientX;
+    cursor.y = event.clientY;
+    if (isCursorOnEmoji()) {
+        updateEmoji();
+    }
+}
+
+function handleMouseClick(event) {
+    if (event.target.id === 'fullscreenBtn') {
+        toggleFullscreen();
+    } else {
+        currentFontIndex = (currentFontIndex + 1) % fonts.length;
+    }
+}
+
+function isCursorOnEmoji() {
+    return cursor.x > emojiPosition.x - emojiSize / 2 &&
+           cursor.x < emojiPosition.x + emojiSize / 2 &&
+           cursor.y > emojiPosition.y - emojiSize / 2 &&
+           cursor.y < emojiPosition.y + emojiSize / 2;
+}
+
+function toggleFullscreen() {
+    isTogglingFullscreen = true; // Set the flag to true when starting the toggle
+
+    if (!document.fullscreenElement) {
+        canvas.requestFullscreen().catch(err => {
+            alert(`Error attempting to enable full-screen mode: ${err.message}`);
+        }).then(() => {
+            resizeCanvas();
+            isTogglingFullscreen = false; // Reset the flag after the transition is complete
+        });
+    } else {
+        document.exitFullscreen().then(() => {
+            resizeCanvas();
+            isTogglingFullscreen = false; // Reset the flag after the transition is complete
+        });
+    }
+}
+
+
+function drawBackground() {
+    const imgWidth = backgroundImage.naturalWidth;
+    const imgHeight = backgroundImage.naturalHeight;
+    const scale = Math.max(canvas.width / imgWidth, canvas.height / imgHeight);
+    const x = (canvas.width / 2) - (imgWidth / 2) * scale;
+    const y = (canvas.height / 2) - (imgHeight / 2) * scale;
+    
+    ctx.drawImage(backgroundImage, x, y, imgWidth * scale, imgHeight * scale);
+}
+
+function drawName() {
+    // Set shadow for contrast
+    ctx.shadowColor = 'white';
+    ctx.shadowBlur = 10;
+    ctx.shadowOffsetX = 0;
+    ctx.shadowOffsetY = 0;
+    // Drawing the name
+    let nameToDraw = currentChildName || "Otis"; // Use current name or "Otis" if empty
+    ctx.font = `bold 60px ${fonts[currentFontIndex]}`;
+    ctx.fillStyle = `hsl(${Date.now() / 100 % 360}, 100%, 50%)`;
+    ctx.textAlign = 'center';
+    ctx.fillText(nameToDraw, canvas.width / 2, canvas.height / 2);
+    
+    // Reset shadow after drawing
+    ctx.shadowColor = 'transparent';
+}
+
+function getRandomBrightColor() {
+    const hue = Math.floor(Math.random() * 360); // Random hue from 0 to 360
+    const saturation = 80 + Math.floor(Math.random() * 20); // Saturation between 80% and 100%
+    const lightness = 30 + Math.floor(Math.random() * 20); // Lightness between 30% and 50%
+    return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+}
+
+
+function drawEmoji() {
+    let caption = emojiCaptions[currentEmoji];
+
+    // Set shadow for contrast
+    ctx.shadowColor = 'white';
+    ctx.shadowBlur = 10;
+    ctx.shadowOffsetX = 0;
+    ctx.shadowOffsetY = 0;
+
+    // Draw emoji
+    ctx.font = `${emojiSize}px Arial`; // Keep the emojiSize if it's used here
+    ctx.textAlign = 'center';
+    ctx.fillText(currentEmoji, emojiPosition.x, emojiPosition.y + emojiSize / 2);
+
+    // Draw caption
+    ctx.fillStyle = captionColor;
+    ctx.font = `20px Arial`; // Font size for the caption
+    ctx.fillText(caption, emojiPosition.x, emojiPosition.y + emojiSize / 2 + 40); // Position the caption below the emoji
+
+    // Reset shadow after drawing
+    ctx.shadowColor = 'transparent';
+}
+
+
+function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawBackground();
+    drawName();
+    drawEmoji();
+
+    // Draw cursor if visible
+    if (cursor.visible) {
+        ctx.beginPath();
+        ctx.arc(cursor.x, cursor.y, 20, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+        ctx.fill();
+    }
+
+    requestAnimationFrame(draw);
+}
+
+
+
+cursor.visible = false;
+
+function updateEmoji() {
+    if (isTogglingFullscreen) {
+        return;
+    }
+    let newEmojiIndex, newPosition;
+    do {
+        newEmojiIndex = Math.floor(Math.random() * emojis.length);
+        newPosition = {
+            x: Math.random() * (canvas.width - emojiSize) + emojiSize / 2,
+            y: Math.random() * (canvas.height - emojiSize - 50) + emojiSize / 2
+        };
+    } while (newEmojiIndex === lastEmojiIndex || distanceBetween(emojiPosition, newPosition) < vicinityThreshold);
+
+    // Log the indices to see what's happening
+    console.log(`New index: ${newEmojiIndex}, Last index: ${lastEmojiIndex}`);
+
+    lastEmojiIndex = newEmojiIndex; // Update the lastEmojiIndex with the new value
+    currentEmoji = emojis[newEmojiIndex];
+    emojiPosition = newPosition;
+
+    speak(emojiCaptions[currentEmoji]);
+    captionColor = getRandomBrightColor();
+}
+
+
+function distanceBetween(point1, point2) {
+    let dx = point1.x - point2.x;
+    let dy = point1.y - point2.y;
+    return Math.sqrt(dx * dx + dy * dy);
+}
+
+// Fullscreen button creation
+let fullscreenBtn = document.createElement('button');
+fullscreenBtn.id = 'fullscreenBtn';
+fullscreenBtn.innerText = 'Fullscreen';
+fullscreenBtn.style.position = 'absolute';
+fullscreenBtn.style.right = '10px';
+fullscreenBtn.style.bottom = '10px';
+document.body.appendChild(fullscreenBtn);
+
+// Detect mobile devices based on touch events and navigator.userAgent
+function isMobileDevice() {
+    return ('ontouchstart' in window || navigator.maxTouchPoints) && /Mobi|Android/i.test(navigator.userAgent);
+}
+
+// If on a mobile device, hide the cursor and fullscreen button, and prevent default touch behaviors
+if (isMobileDevice()) {
+    document.body.style.cursor = 'initial'; // Reset to default cursor
+    fullscreenBtn.style.display = 'none';   // Hide the fullscreen button
+
+}
+
+backgroundImage.onload = function() {
+    draw(); // Start the drawing loop once the background image is loaded
+};
+
+function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    updateEmoji(); // Update the emoji position according to the new canvas size
+}
+
+
+// Call resizeCanvas initially and on window resize
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+// Get the modal
+var modal = document.getElementById("settingsModal");
+
+// Get the button that opens the modal
+var btn = document.getElementById("settingsBtn");
+btn.onclick = function() {
+    modal.style.display = "block";
+    var nameFromCookie = getCookie("childName");
+    document.getElementById("childName").value = nameFromCookie || "Otis"; // Set name from cookie or default
+}
+
+// Get the <span> element that closes the modal
+var span = document.getElementsByClassName("close")[0];
+
+// When the user clicks the button, open the modal 
+btn.onclick = function() {
+    modal.style.display = "block";
+}
+
+// When the user clicks on <span> (x), close the modal
+span.onclick = function() {
+    modal.style.display = "none";
+}
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+    if (event.target == modal) {
+        modal.style.display = "none";
+    }
+}
+
+saveBtn.onclick = function() {
+    currentChildName = document.getElementById("childName").value.trim();
+    var soundSetting = document.getElementById("soundToggle").checked;
+
+    setCookie("childName", currentChildName, 365);
+    setCookie("soundSetting", soundSetting, 365);
+
+    modal.style.display = "none";
+};
+
+
+    </script>
+</body>
+</html>
